@@ -5,119 +5,197 @@ using System.Linq;
 using VgcCollege.Data;
 using VgcCollege.Models;
 
-public class ExamResultTests
+namespace VgcCollege.Tests
 {
-    private ApplicationDbContext GetDbContext()
+    public class ExamResultTests
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
-        return new ApplicationDbContext(options);
-    }
-    [Fact]
-    public void Duplicate_Exam_Result_Can_Be_Detected()
-    {
-        var context = GetDbContext();
-
-        var result1 = new ExamResult
+        private ApplicationDbContext GetDbContext()
         {
-            ExamId = 1,
-            StudentProfileId = 1,
-            Score = 80,
-            Grade = "A"
-        };
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
 
-        var result2 = new ExamResult
+            return new ApplicationDbContext(options);
+        }
+
+        [Fact]
+        public void Duplicate_Exam_Result_Can_Be_Detected()
         {
-            ExamId = 1,
-            StudentProfileId = 1,
-            Score = 70,
-            Grade = "B"
-        };
+            var context = GetDbContext();
 
-        context.ExamResults.Add(result1);
-        context.ExamResults.Add(result2);
-        context.SaveChanges();
+            var result1 = new ExamResult
+            {
+                ExamId = 1,
+                StudentProfileId = 1,
+                Score = 80,
+                Grade = "A"
+            };
 
-        var count = context.ExamResults
-            .Count(r => r.ExamId == 1 && r.StudentProfileId == 1);
+            var result2 = new ExamResult
+            {
+                ExamId = 1,
+                StudentProfileId = 1,
+                Score = 70,
+                Grade = "B"
+            };
 
-        Assert.True(count == 2);
-    }
+            context.ExamResults.Add(result1);
+            context.ExamResults.Add(result2);
+            context.SaveChanges();
 
-    [Fact]
-    public void Score_Should_Be_Valid()
-    {
-        var result = new ExamResult
+            var count = context.ExamResults
+                .Count(r => r.ExamId == 1 && r.StudentProfileId == 1);
+
+            Assert.True(count == 2);
+        }
+
+        [Fact]
+        public void Score_Should_Be_Valid()
         {
-            Score = 120
-        };
+            var result = new ExamResult
+            {
+                Score = 120
+            };
 
-        Assert.False(result.Score <= 100);
-    }
+            Assert.False(result.Score <= 100);
+        }
 
-    [Fact]
-    public void Released_Results_Should_Be_Visible()
-    {
-        var context = GetDbContext();
-
-        var exam = new Exam
+        [Fact]
+        public void Released_Results_Should_Be_Visible()
         {
-            Id = 1,
-            Title = "Test Exam",
-            ResultsReleased = true
-        };
+            var context = GetDbContext();
 
-        context.Exams.Add(exam);
+            var exam = new Exam
+            {
+                Id = 1,
+                Title = "Test Exam",
+                ResultsReleased = true
+            };
 
-        var result = new ExamResult
+            context.Exams.Add(exam);
+
+            var result = new ExamResult
+            {
+                ExamId = 1,
+                StudentProfileId = 1,
+                Score = 85,
+                Grade = "A"
+            };
+
+            context.ExamResults.Add(result);
+            context.SaveChanges();
+
+            var visible = context.ExamResults
+                .Include(r => r.Exam)
+                .Where(r => r.Exam != null && r.Exam.ResultsReleased)
+                .ToList();
+
+            Assert.NotEmpty(visible);
+        }
+
+        [Fact]
+        public void Unreleased_Results_Should_Not_Be_Visible()
         {
-            ExamId = 1,
-            StudentProfileId = 1,
-            Score = 85,
-            Grade = "A"
-        };
+            var context = GetDbContext();
 
-        context.ExamResults.Add(result);
-        context.SaveChanges();
+            var exam = new Exam
+            {
+                Id = 2,
+                Title = "Hidden Exam",
+                ResultsReleased = false
+            };
 
-        var visible = context.ExamResults
-            .Where(r => r.Exam.ResultsReleased == true)
-            .ToList();
+            context.Exams.Add(exam);
 
-        Assert.NotEmpty(visible);
-    }
+            var result = new ExamResult
+            {
+                ExamId = 2,
+                StudentProfileId = 1,
+                Score = 60,
+                Grade = "C"
+            };
 
-    [Fact]
-    public void Unreleased_Results_Should_Not_Be_Visible()
-    {
-        var context = GetDbContext();
+            context.ExamResults.Add(result);
+            context.SaveChanges();
 
-        var exam = new Exam
+            var hidden = context.ExamResults
+                .Include(r => r.Exam)
+                .Where(r => r.Exam != null && r.Exam.ResultsReleased)
+                .ToList();
+
+            Assert.Empty(hidden);
+        }
+
+        [Fact]
+        public void Student_Should_Only_See_Their_Own_Results()
         {
-            Id = 2,
-            Title = "Hidden Exam",
-            ResultsReleased = false
-        };
+            var context = GetDbContext();
 
-        context.Exams.Add(exam);
+            context.ExamResults.AddRange(
+                new ExamResult { ExamId = 1, StudentProfileId = 1, Score = 80, Grade = "A" },
+                new ExamResult { ExamId = 1, StudentProfileId = 2, Score = 70, Grade = "B" }
+            );
 
-        var result = new ExamResult
+            context.SaveChanges();
+
+            var student1Results = context.ExamResults
+                .Where(r => r.StudentProfileId == 1)
+                .ToList();
+
+            Assert.Single(student1Results);
+        }
+
+        [Fact]
+        public void Score_Should_Be_Between_0_And_100()
         {
-            ExamId = 2,
-            StudentProfileId = 1,
-            Score = 60,
-            Grade = "C"
-        };
+            var result = new ExamResult
+            {
+                Score = -10
+            };
 
-        context.ExamResults.Add(result);
-        context.SaveChanges();
+            Assert.False(result.Score >= 0 && result.Score <= 100);
+        }
 
-        var hidden = context.ExamResults
-            .Where(r => r.Exam.ResultsReleased == true)
-            .ToList();
+        [Fact]
+        public void ExamResult_Should_Link_To_Exam()
+        {
+            var context = GetDbContext();
 
-        Assert.Empty(hidden);
+            var exam = new Exam
+            {
+                Id = 3,
+                Title = "Math Exam",
+                ResultsReleased = true
+            };
+
+            context.Exams.Add(exam);
+
+            var result = new ExamResult
+            {
+                ExamId = 3,
+                StudentProfileId = 1,
+                Score = 90,
+                Grade = "A"
+            };
+
+            context.ExamResults.Add(result);
+            context.SaveChanges();
+
+            var saved = context.ExamResults
+                .Include(r => r.Exam)
+                .FirstOrDefault();
+
+            Assert.NotNull(saved?.Exam);
+        }
+
+        [Fact]
+        public void No_Results_Should_Return_Empty_List()
+        {
+            var context = GetDbContext();
+
+            var results = context.ExamResults.ToList();
+
+            Assert.Empty(results);
+        }
     }
 }
