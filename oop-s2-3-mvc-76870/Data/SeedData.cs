@@ -78,7 +78,7 @@ namespace VgcCollege.Data
                         IdentityUserId = student1.Id,
                         Name = "Sandra Student",
                         Email = "student1@vgc.com",
-                        Phone = "0851111111",
+                        Phone = "085 111 6758",
                         Address = "Dublin",
                         StudentNumber = "ST1001"
                     },
@@ -87,7 +87,7 @@ namespace VgcCollege.Data
                         IdentityUserId = student2.Id,
                         Name = "Mary Student",
                         Email = "student2@vgc.com",
-                        Phone = "0852222222",
+                        Phone = "085 563 7648",
                         Address = "Cork",
                         StudentNumber = "ST1002"
                     }
@@ -102,7 +102,7 @@ namespace VgcCollege.Data
                     IdentityUserId = faculty.Id,
                     Name = "John Faculty",
                     Email = "faculty1@vgc.com",
-                    Phone = "0853333333"
+                    Phone = "085 765 0912"
                 });
             }
 
