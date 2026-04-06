@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using oop_s2_3_mvc_76870.Models;
+using VgcCollege.Models;
 
-namespace oop_s2_3_mvc_76870.Controllers
+namespace VgcCollege.Controllers
 {
     public class HomeController : Controller
     {

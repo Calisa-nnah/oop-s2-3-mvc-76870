@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-oop_s2_3_mvc_76870-acdf1ba5-397e-4a5e-b999-af57cf3fa28e</UserSecretsId>
-    <RootNamespace>oop_s2_3_mvc_76870</RootNamespace>
+    <UserSecretsId>aspnet-VgcCollege-acdf1ba5-397e-4a5e-b999-af57cf3fa28e</UserSecretsId>
+    <RootNamespace>VgcCollege</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

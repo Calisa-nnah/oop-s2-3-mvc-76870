@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace oop_s2_3_mvc_76870.Migrations
+namespace VgcCollege.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

@@ -1,4 +1,4 @@
-namespace oop_s2_3_mvc_76870.Models
+namespace VgcCollege.Models
 {
     public class ErrorViewModel
     {

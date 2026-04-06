@@ -9,7 +9,7 @@ using VgcCollege.Data;
 
 #nullable disable
 
-namespace oop_s2_3_mvc_76870.Migrations
+namespace VgcCollege.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260406083923_InitialCreate")]
