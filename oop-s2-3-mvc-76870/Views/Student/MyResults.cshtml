@@ -1,0 +1,72 @@
+﻿@using VgcCollege.Models
+@{
+    ViewData["Title"] = "My Results";
+    var assignmentResults = ViewBag.AssignmentResults as List<AssignmentResult>;
+    var examResults = ViewBag.ExamResults as List<ExamResult>;
+}
+
+<h1>My Results</h1>
+
+<h3>Assignment Results</h3>
+@if (assignmentResults != null && assignmentResults.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Assignment</th>
+                <th>Course</th>
+                <th>Branch</th>
+                <th>Score</th>
+                <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in assignmentResults)
+            {
+                <tr>
+                    <td>@item.Assignment?.Title</td>
+                    <td>@item.Assignment?.Course?.Name</td>
+                    <td>@item.Assignment?.Course?.Branch?.Name</td>
+                    <td>@item.Score</td>
+                    <td>@item.Feedback</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No assignment results found.</p>
+}
+
+<h3 class="mt-4">Exam Results</h3>
+@if (examResults != null && examResults.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Exam</th>
+                <th>Course</th>
+                <th>Branch</th>
+                <th>Score</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in examResults)
+            {
+                <tr>
+                    <td>@item.Exam?.Title</td>
+                    <td>@item.Exam?.Course?.Name</td>
+                    <td>@item.Exam?.Course?.Branch?.Name</td>
+                    <td>@item.Score</td>
+                    <td>@item.Grade</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No released exam results available.</p>
+}
