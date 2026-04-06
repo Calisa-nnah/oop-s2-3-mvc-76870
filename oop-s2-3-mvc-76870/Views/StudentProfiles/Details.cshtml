@@ -1,54 +1,58 @@
 @model VgcCollege.Models.StudentProfile
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Student Profile Details";
 }
 
-<h1>Details</h1>
+<h1>Student Profile Details</h1>
 
 <div>
-    <h4>StudentProfile</h4>
+    <h4>Student Profile</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdentityUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdentityUser.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentNumber)
+        <dt class="col-sm-2">Name</dt>
+        <dd class="col-sm-10">@Model.Name</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+
+        <dt class="col-sm-2">Phone</dt>
+        <dd class="col-sm-10">@Model.Phone</dd>
+
+        <dt class="col-sm-2">Address</dt>
+        <dd class="col-sm-10">@Model.Address</dd>
+
+        <dt class="col-sm-2">Student Number</dt>
+        <dd class="col-sm-10">@Model.StudentNumber</dd>
+
+        <dt class="col-sm-2">Linked Login</dt>
+        <dd class="col-sm-10">@Model.IdentityUser?.Email</dd>
+
+        <dt class="col-sm-2">Course(s)</dt>
+        <dd class="col-sm-10">
+            @if (Model.CourseEnrolments != null && Model.CourseEnrolments.Any())
+            {
+                <ul>
+                    @foreach (var enrolment in Model.CourseEnrolments)
+                    {
+                        <li>
+                            <strong>Course:</strong> @enrolment.Course?.Name <br />
+                            <strong>Branch:</strong> @enrolment.Course?.Branch?.Name <br />
+                            <strong>Status:</strong> @enrolment.Status <br />
+                            <strong>Enrol Date:</strong> @enrolment.EnrolDate.ToShortDateString()
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No enrolments yet</span>
+            }
         </dd>
     </dl>
 </div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

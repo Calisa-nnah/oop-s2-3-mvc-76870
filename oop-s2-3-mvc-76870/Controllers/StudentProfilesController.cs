@@ -20,7 +20,12 @@ namespace VgcCollege.Controllers
         // GET: StudentProfiles
         public async Task<IActionResult> Index()
         {
-            var students = _context.StudentProfiles.Include(s => s.IdentityUser);
+            var students = _context.StudentProfiles
+                .Include(s => s.IdentityUser)
+                .Include(s => s.CourseEnrolments)
+                    .ThenInclude(e => e.Course)
+                        .ThenInclude(c => c.Branch);
+
             return View(await students.ToListAsync());
         }
 
@@ -31,6 +36,9 @@ namespace VgcCollege.Controllers
 
             var studentProfile = await _context.StudentProfiles
                 .Include(s => s.IdentityUser)
+                .Include(s => s.CourseEnrolments)
+                    .ThenInclude(e => e.Course)
+                        .ThenInclude(c => c.Branch)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (studentProfile == null) return NotFound();
@@ -46,6 +54,7 @@ namespace VgcCollege.Controllers
                     .Where(u => !_context.StudentProfiles.Select(s => s.IdentityUserId).Contains(u.Id)),
                 "Id",
                 "Email");
+
             return View();
         }
 
@@ -103,6 +112,7 @@ namespace VgcCollege.Controllers
                     {
                         return NotFound();
                     }
+
                     throw;
                 }
 
@@ -120,6 +130,9 @@ namespace VgcCollege.Controllers
 
             var studentProfile = await _context.StudentProfiles
                 .Include(s => s.IdentityUser)
+                .Include(s => s.CourseEnrolments)
+                    .ThenInclude(e => e.Course)
+                        .ThenInclude(c => c.Branch)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (studentProfile == null) return NotFound();

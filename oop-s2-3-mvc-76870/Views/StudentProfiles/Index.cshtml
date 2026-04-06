@@ -15,9 +15,9 @@
         <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
             <th>Student Number</th>
+            <th>Course(s)</th>
+            <th>Branch(es)</th>
             <th>Linked Login</th>
             <th></th>
         </tr>
@@ -28,9 +28,32 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Email</td>
-                <td>@item.Phone</td>
-                <td>@item.Address</td>
                 <td>@item.StudentNumber</td>
+                <td>
+                    @if (item.CourseEnrolments != null && item.CourseEnrolments.Any())
+                    {
+                @string.Join(", ", item.CourseEnrolments
+                                .Where(e => e.Course != null)
+                                .Select(e => e.Course!.Name))
+                                }
+                    else
+                    {
+                        <span>No enrolments</span>
+                    }
+                </td>
+                <td>
+                    @if (item.CourseEnrolments != null && item.CourseEnrolments.Any())
+                    {
+                @string.Join(", ", item.CourseEnrolments
+                                .Where(e => e.Course?.Branch != null)
+                                .Select(e => e.Course!.Branch!.Name)
+                                .Distinct())
+                                }
+                    else
+                    {
+                        <span>No branch</span>
+                    }
+                </td>
                 <td>@item.IdentityUser?.Email</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
