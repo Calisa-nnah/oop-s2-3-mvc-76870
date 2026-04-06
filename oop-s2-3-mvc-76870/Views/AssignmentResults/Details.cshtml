@@ -1,42 +1,35 @@
 @model VgcCollege.Models.AssignmentResult
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Assignment Result Details";
 }
 
-<h1>Details</h1>
+<h1>Assignment Result Details</h1>
 
 <div>
-    <h4>AssignmentResult</h4>
+    <h4>Assignment Result</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Assignment)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Assignment.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentProfile)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentProfile.Email)
-        </dd>
+        <dt class="col-sm-2">Student</dt>
+        <dd class="col-sm-10">@Model.StudentProfile?.Name</dd>
 
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Score)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Score)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Feedback)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Feedback)
-        </dd>
+        <dt class="col-sm-2">Assignment</dt>
+        <dd class="col-sm-10">@Model.Assignment?.Title</dd>
+
+        <dt class="col-sm-2">Course</dt>
+        <dd class="col-sm-10">@Model.Assignment?.Course?.Name</dd>
+
+        <dt class="col-sm-2">Branch</dt>
+        <dd class="col-sm-10">@Model.Assignment?.Course?.Branch?.Name</dd>
+
+        <dt class="col-sm-2">Score</dt>
+        <dd class="col-sm-10">@Model.Score</dd>
+
+        <dt class="col-sm-2">Feedback</dt>
+        <dd class="col-sm-10">@Model.Feedback</dd>
     </dl>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

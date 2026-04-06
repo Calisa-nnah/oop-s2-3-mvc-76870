@@ -49,8 +49,7 @@ namespace VgcCollege.Controllers
         // GET: AssignmentResults/Create
         public IActionResult Create()
         {
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Name");
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title");
+            PopulateDropdowns();
             return View();
         }
 
@@ -74,8 +73,7 @@ namespace VgcCollege.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Name", result.StudentProfileId);
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title", result.AssignmentId);
+            PopulateDropdowns(result.StudentProfileId, result.AssignmentId);
             return View(result);
         }
 
@@ -87,8 +85,7 @@ namespace VgcCollege.Controllers
             var result = await _context.AssignmentResults.FindAsync(id);
             if (result == null) return NotFound();
 
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Name", result.StudentProfileId);
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title", result.AssignmentId);
+            PopulateDropdowns(result.StudentProfileId, result.AssignmentId);
             return View(result);
         }
 
@@ -118,8 +115,7 @@ namespace VgcCollege.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Name", result.StudentProfileId);
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title", result.AssignmentId);
+            PopulateDropdowns(result.StudentProfileId, result.AssignmentId);
             return View(result);
         }
 
@@ -153,6 +149,28 @@ namespace VgcCollege.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateDropdowns(object? selectedStudent = null, object? selectedAssignment = null)
+        {
+            ViewData["StudentProfileId"] = new SelectList(
+                _context.StudentProfiles,
+                "Id",
+                "Name",
+                selectedStudent);
+
+            ViewData["AssignmentId"] = new SelectList(
+                _context.Assignments
+                    .Include(a => a.Course)
+                    .Select(a => new
+                    {
+                        a.Id,
+                        Display = a.Title + " (" + a.Course!.Name + ")"
+                    })
+                    .ToList(),
+                "Id",
+                "Display",
+                selectedAssignment);
         }
     }
 }
