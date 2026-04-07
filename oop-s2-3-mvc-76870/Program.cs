@@ -1,9 +1,19 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using VgcCollege.Data;
 using VgcCollege.Models;
 
+//  SERILOG CONFIG 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+//USE SERILOG
+builder.Host.UseSerilog();
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -54,6 +64,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+// SEED DATA
 await SeedData.InitializeAsync(app.Services);
+
+// CLEAN SHUTDOWN LOGGING
+app.Lifetime.ApplicationStopped.Register(() => Log.CloseAndFlush());
 
 app.Run();
